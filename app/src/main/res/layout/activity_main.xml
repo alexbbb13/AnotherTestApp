@@ -4,8 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+  <!--Simulating toolbar because of API 15+ -->
   <TextView
     android:id="@+id/textView"
+    style  = "@style/FragmentToolbarStyle"
+    android:paddingLeft="40dp"
+    android:textSize="20sp"
+    android:gravity="center_vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="Luminary Take home Exercise" />
