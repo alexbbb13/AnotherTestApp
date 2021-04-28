@@ -9,7 +9,7 @@ import io.reactivex.Observable
 class VisualsInteractorImpl(private val repository: VisualsRepository): VisualsInteractor {
 
     /*
-    Business cases
+    Business use cases
 
     When the app starts, check a if there is a list of cached users. If there is, return the cache list.
     If there is no users in cache, hit the endpoint, fetch the users, store them in a Database as Cache, and return the list as a result.
@@ -23,7 +23,7 @@ class VisualsInteractorImpl(private val repository: VisualsRepository): VisualsI
 
     override fun getAllVisuals(update: Boolean): Observable<List<ClientViewData>> {
             return when(update) {
-                true -> loadFromNetworkSaveTransform()
+                true -> repository.clearCache().flatMap {loadFromNetworkSaveTransform()}
                 else -> repository.loadFromDb().flatMapObservable {
                     it -> when(it.isNullOrEmpty()) {
                     //no saved data in Db
@@ -37,7 +37,7 @@ class VisualsInteractorImpl(private val repository: VisualsRepository): VisualsI
     private fun loadFromNetworkSaveTransform(): Observable<List<ClientViewData>>  {
         return repository
             .loadFromNetwork()
-            .doOnSuccess { list -> repository.saveToDb(dataToDb(list)) }
+            .flatMap { list -> repository.saveToDb(list, dataToDb(list)) }
             .map { list -> dataToViewData(list) }
             .toObservable()
     }
@@ -48,9 +48,13 @@ class VisualsInteractorImpl(private val repository: VisualsRepository): VisualsI
     }
 
     private fun dataToDb(list: List<Client>): List<ClientDb> {
-        return list.map {client ->
+        return list.mapIndexed  {index, client ->
             ClientDb(
-                client.id.hashCode(),
+                index + 1,  //in production
+                // we probably should get the Id from client, but there are
+                // lots of duplicate fields in the ID server response
+                // so for cache simple ids are OK, since the cache fetches the data
+                // incrementing the ids
                 Gson().toJson(client)
             )
         }

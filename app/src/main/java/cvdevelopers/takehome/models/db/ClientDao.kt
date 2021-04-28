@@ -8,16 +8,16 @@ import io.reactivex.Single
 interface ClientDao {
 
     @Query("SELECT * FROM clients")
-    fun getClients(): Single<List<ClientDb>>
+    fun getClients(): List<ClientDb>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertClients(items: Iterable<ClientDb>)
+    fun insertClients(items: List<ClientDb>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOneClient(item: ClientDb): Single<Long>
 
     @Transaction
-    fun replaceClients(items: Iterable<ClientDb>) {
+    fun replaceClients(items: List<ClientDb>) {
         insertClients(items)
     }
 

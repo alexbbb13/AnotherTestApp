@@ -21,12 +21,13 @@ class UserListPresenter constructor(val interactor: VisualsInteractor) : MvpPres
     }
 
     fun loadImages(update: Boolean = false) {
-        //viewState.setProgressBarVisibility(true)
         interactor.getAllVisuals(update)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            //.doOnComplete { viewState.setProgressBarVisibility(false) }
-            .subscribe(this::onNewDataLoaded, this::onError)
+            .subscribe({data ->
+                if(update) viewState.stopRefreshing()
+                onNewDataLoaded(data)
+            },{this::onError})
     }
 
     fun updateImages() {

@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import cvdevelopers.githubstalker.R
+import cvdevelopers.takehome.LuminaryTakeHomeApplication
 import cvdevelopers.takehome.adapters.UserListAdapter
 import cvdevelopers.takehome.presenters.UserListPresenter
 import dagger.android.support.AndroidSupportInjection
@@ -38,21 +39,18 @@ class UserListFragment : MvpAppCompatFragment(), UserListView {
     @BindView(R.id.swipe)
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.rv_user_list)
-    lateinit var itemsContainer: RecyclerView
+    lateinit var recyclerView: RecyclerView
 
     private lateinit var viewManager: RecyclerView.LayoutManager
 
-    lateinit var recyclerView: RecyclerView
-    lateinit var progressBar: ProgressBar
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        AndroidSupportInjection.inject(this)
+        (activity?.application as LuminaryTakeHomeApplication).appComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_user_list, container, false)
-        ButterKnife.bind(root)
+        ButterKnife.bind(this, root)
 
         viewManager = LinearLayoutManager(context)
         swipeRefreshLayout.setOnRefreshListener { presenter.updateImages() }
@@ -70,6 +68,10 @@ class UserListFragment : MvpAppCompatFragment(), UserListView {
                 }
             }
         }
+    }
+
+    override fun stopRefreshing() {
+       swipeRefreshLayout.isRefreshing = false
     }
 }
 

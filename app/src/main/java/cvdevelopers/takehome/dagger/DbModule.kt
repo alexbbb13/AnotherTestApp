@@ -2,17 +2,11 @@ package cvdevelopers.takehome.dagger
 
 import android.content.Context
 import androidx.room.Room
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import cvdevelopers.takehome.api.RandomUserApiEndpoint
 import cvdevelopers.takehome.room.AppRoomDatabase
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import io.reactivex.Single
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +20,11 @@ class DbModule  {
             AppRoomDatabase::class.java, "app_database")
             .fallbackToDestructiveMigration() // Cleans the database without the migrations
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppRoomSingle(appRoomLazy: Lazy<AppRoomDatabase>): Single<AppRoomDatabase> {
+        return Single.fromCallable { appRoomLazy.get() }
     }
 }
