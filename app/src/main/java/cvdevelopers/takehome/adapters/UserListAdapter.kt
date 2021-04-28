@@ -34,7 +34,10 @@ open class UserListAdapter(val myDataset: List<ClientViewData>) :
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = myDataset[position]
-        Glide.with(holder.userPicture).load(item.pictureUrl).into(holder.userPicture)
+        Glide.with(holder.userPicture)
+            .load(item.pictureUrl)
+            .circleCrop()
+            .into(holder.userPicture)
         holder.userName.text = item.firstName
         holder.userFamilyName.text = item.lastName
     }
