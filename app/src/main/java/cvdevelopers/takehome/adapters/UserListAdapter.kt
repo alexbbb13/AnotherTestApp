@@ -16,7 +16,6 @@ open class UserListAdapter(val myDataset: List<ClientViewData>) :
     inner class MyViewHolder(v: View) : RecyclerView1.ViewHolder(v){
         val userPicture: ImageView = v.findViewById(R.id.userPicture)
         val userName: TextView = v.findViewById(R.id.userName)
-        val userFamilyName: TextView = v.findViewById(R.id.userFamilyName)
     }
 
     override fun onCreateViewHolder(
@@ -38,7 +37,6 @@ open class UserListAdapter(val myDataset: List<ClientViewData>) :
             .load(item.pictureUrl)
             .circleCrop()
             .into(holder.userPicture)
-        holder.userName.text = item.firstName
-        holder.userFamilyName.text = item.lastName
+        holder.userName.text = "${item.firstName} ${item.lastName}"
     }
 }
